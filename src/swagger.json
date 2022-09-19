@@ -1,0 +1,430 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"DosageProposalXML": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetDosageProposalResultDTO": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"iteration": {
+						"type": "string"
+					},
+					"mapping": {
+						"type": "string"
+					},
+					"unitTextSingular": {
+						"type": "string"
+					},
+					"unitTextPlural": {
+						"type": "string"
+					},
+					"supplementaryText": {
+						"type": "string"
+					},
+					"beginDates": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"endDates": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"fmkversion": {
+						"type": "string"
+					},
+					"dosageProposalVersion": {
+						"type": "number",
+						"format": "double"
+					},
+					"shortTextMaxLength": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"iteration",
+					"mapping",
+					"unitTextSingular",
+					"unitTextPlural",
+					"supplementaryText",
+					"beginDates",
+					"endDates",
+					"fmkversion",
+					"dosageProposalVersion",
+					"shortTextMaxLength"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CombinedConversion": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DosageWrapperWithOptionsDTO": {
+				"properties": {
+					"dosageJson": {
+						"type": "string"
+					},
+					"options": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dosageJson",
+					"options"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DosageWrapperWithOptionsAndMaxLengthDTO": {
+				"properties": {
+					"dosageJson": {
+						"type": "string"
+					},
+					"options": {
+						"type": "string"
+					},
+					"maxLength": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"dosageJson",
+					"options",
+					"maxLength"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DosageWrapperWithMaxLengthDTO": {
+				"properties": {
+					"dosageJson": {
+						"type": "string"
+					},
+					"maxLength": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"dosageJson",
+					"maxLength"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DosageWrapperDTO": {
+				"properties": {
+					"dosageJson": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dosageJson"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DailyDosis": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "fmk-dosis-til-tekst-node",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/getDosageProposalResult": {
+			"post": {
+				"operationId": "GetDosageProposalResult",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DosageProposalXML"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetDosageProposalResultDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/convertCombined": {
+			"post": {
+				"operationId": "ConvertCombined",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CombinedConversion"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperWithOptionsDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/convertLongText": {
+			"post": {
+				"operationId": "ConvertLongText",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperWithOptionsDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/convertShortText": {
+			"post": {
+				"operationId": "ConvertShortText",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperWithOptionsAndMaxLengthDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getShortTextConverterClassName": {
+			"post": {
+				"operationId": "GetShortTextConverterClassName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperWithMaxLengthDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getLongTextConverterClassName": {
+			"post": {
+				"operationId": "GetLongTextConverterClassName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getDosageType": {
+			"post": {
+				"operationId": "GetDosageType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getDosageType144": {
+			"post": {
+				"operationId": "GetDosageType144",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/calculateDailyDosis": {
+			"post": {
+				"operationId": "CalculateDailyDosis",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DailyDosis"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DosageWrapperDTO"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
