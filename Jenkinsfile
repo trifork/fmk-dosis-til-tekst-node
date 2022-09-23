@@ -1,3 +1,9 @@
+properties([
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')),
+        githubProjectProperty(displayName: '', projectUrlStr: 'https://github.com/trifork/fmk-dosis-til-tekst-node/'),
+        pipelineTriggers([pollSCM('H/5 * * * * ')])
+])
+
 pipeline {
     agent any
     stages {
