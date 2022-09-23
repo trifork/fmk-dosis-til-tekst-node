@@ -6,14 +6,14 @@ import {
     DosageTypeCalculator,
     DosageTypeCalculator144,
     Factory
-} from "fmk-dosis-til-tekst-ts-commonjs";
-import {GetDosageProposalResultDTO} from "../models/request/GetDosageProposalResultDTO";
-import {DosageWrapperWithOptionsDTO} from "../models/request/DosageWrapperWithOptionsDTO";
-import {CombinedConversion} from "fmk-dosis-til-tekst-ts-commonjs/dist/lib/CombinedConversion";
-import {DosageWrapperWithOptionsAndMaxLengthDTO} from "../models/request/DosageWrapperWithOptionsAndMaxLengthDTO";
-import {DosageWrapperWithMaxLengthDTO} from "../models/request/DosageWrapperWithMaxLengthDTO";
-import {DosageWrapperDTO} from "../models/request/DosageWrapperDTO";
-import {DailyDosis} from "fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis";
+} from 'fmk-dosis-til-tekst-ts-commonjs';
+import {GetDosageProposalResultDTO} from '../models/request/GetDosageProposalResultDTO';
+import {DosageWrapperWithOptionsDTO} from '../models/request/DosageWrapperWithOptionsDTO';
+import {CombinedConversion} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/CombinedConversion';
+import {DosageWrapperWithOptionsAndMaxLengthDTO} from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
+import {DosageWrapperWithMaxLengthDTO} from '../models/request/DosageWrapperWithMaxLengthDTO';
+import {DosageWrapperDTO} from '../models/request/DosageWrapperDTO';
+import {DailyDosis} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
 
 
 export class DosisTilTekstService {

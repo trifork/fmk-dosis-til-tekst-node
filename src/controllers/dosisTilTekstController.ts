@@ -1,15 +1,15 @@
-import {Body, Controller, Post, Route} from "tsoa";
-import {GetDosageProposalResultDTO} from "../models/request/GetDosageProposalResultDTO";
-import {DosisTilTekstService} from "../services/dosisTilTekstService";
-import {DosageProposalXML} from "fmk-dosis-til-tekst-ts-commonjs";
-import {CombinedConversion} from "fmk-dosis-til-tekst-ts-commonjs/dist/lib/CombinedConversion";
-import {DailyDosis} from "fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis";
-import {DosageWrapperWithOptionsDTO} from "../models/request/DosageWrapperWithOptionsDTO";
-import {DosageWrapperWithMaxLengthDTO} from "../models/request/DosageWrapperWithMaxLengthDTO";
-import {DosageWrapperWithOptionsAndMaxLengthDTO} from "../models/request/DosageWrapperWithOptionsAndMaxLengthDTO";
-import {DosageWrapperDTO} from "../models/request/DosageWrapperDTO";
+import {Body, Controller, Post, Route} from 'tsoa';
+import {GetDosageProposalResultDTO} from '../models/request/GetDosageProposalResultDTO';
+import {DosisTilTekstService} from '../services/dosisTilTekstService';
+import {DosageProposalXML} from 'fmk-dosis-til-tekst-ts-commonjs';
+import {CombinedConversion} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/CombinedConversion';
+import {DailyDosis} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
+import {DosageWrapperWithOptionsDTO} from '../models/request/DosageWrapperWithOptionsDTO';
+import {DosageWrapperWithMaxLengthDTO} from '../models/request/DosageWrapperWithMaxLengthDTO';
+import {DosageWrapperWithOptionsAndMaxLengthDTO} from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
+import {DosageWrapperDTO} from '../models/request/DosageWrapperDTO';
 
-@Route("")
+@Route('')
 export class DosisTilTekstController extends Controller {
 
     @Post('/getDosageProposalResult')
