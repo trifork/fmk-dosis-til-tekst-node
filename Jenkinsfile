@@ -17,7 +17,8 @@ pipeline {
         stage('build docker image and push') {
             steps {
                 script {
-                    env.VERSION=readJSON(file: 'package.json').version
+                    def props = readJSON file: 'package.json'
+                    env.VERSION=props.version
                     image = docker.build("registry.fmk.netic.dk/fmk/fmk-dosistiltekst-server:${env.VERSION}", "-f ./fmk-dosis-til-tekst-node/Dockerfile ./fmk-dosis-til-tekst-node")
                     image.push()
                     image.push('latest')
