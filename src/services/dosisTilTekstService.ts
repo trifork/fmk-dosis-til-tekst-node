@@ -9,11 +9,12 @@ import {
 } from 'fmk-dosis-til-tekst-ts-commonjs';
 import {GetDosageProposalResultDTO} from '../models/request/GetDosageProposalResultDTO';
 import {DosageWrapperWithOptionsDTO} from '../models/request/DosageWrapperWithOptionsDTO';
-import {CombinedConversion} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/CombinedConversion';
 import {DosageWrapperWithOptionsAndMaxLengthDTO} from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
 import {DosageWrapperWithMaxLengthDTO} from '../models/request/DosageWrapperWithMaxLengthDTO';
 import {DosageWrapperDTO} from '../models/request/DosageWrapperDTO';
 import {DailyDosis} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
+import {DosageTranslationDTO} from '../models/response/DosageTranslationDTO';
+import {DosageTranslationCombinedDTO} from '../models/response/DosageTranslationCombinedDTO';
 
 
 export class DosisTilTekstService {
@@ -25,7 +26,11 @@ export class DosisTilTekstService {
             let beginDateJS = new Date(requestDTO.beginDates[i]);
             beginDateArray.push(beginDateJS);
 
-            let endDateJS = new Date(requestDTO.endDates[i]);
+            let endDateJS: any = null;
+            if (requestDTO.endDates[i] !== null) {
+                endDateJS = new Date(requestDTO.endDates[i]);
+            }
+
             endDateArray.push(endDateJS);
         }
 
@@ -42,8 +47,28 @@ export class DosisTilTekstService {
         }
     }
 
-    public convertCombined(requestDTO: DosageWrapperWithOptionsDTO): CombinedConversion {
-        return CombinedTextConverter.convertStr(requestDTO.dosageJson, requestDTO.options);
+    public convertCombined(requestDTO: DosageWrapperWithOptionsDTO): DosageTranslationCombinedDTO | null {
+        let conversion = CombinedTextConverter.convertStr(requestDTO.dosageJson, requestDTO.options);
+        if (conversion === null) {
+            return null;
+        }
+
+        let combinedTranslation = new DosageTranslationDTO(
+            conversion.getCombinedShortText(),
+            conversion.getCombinedLongText(),
+            conversion.getCombinedDailyDosis()
+        );
+
+        let periodTranslations: DosageTranslationDTO[] = [];
+        for (let periodText of conversion.getPeriodTexts()) {
+            let periodTranslation = new DosageTranslationDTO(
+                periodText[0],
+                periodText[1],
+                periodText[2]
+            );
+            periodTranslations.push(periodTranslation);
+        }
+        return new DosageTranslationCombinedDTO(combinedTranslation, periodTranslations);
     }
 
     public convertLongText(requestDTO: DosageWrapperWithOptionsDTO): string {
