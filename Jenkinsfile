@@ -22,7 +22,7 @@ pipeline {
                         env.USERID = env.USERID.trim()
                     }
 
-                    def props = readJSON file: 'package.json'
+                    def props = readJSON file: 'fmk-dosis-til-tekst-node/package.json'
                     env.VERSION=props.version
                     image = docker.build("registry.fmk.netic.dk/fmk/fmk-dosistiltekst-server:${env.VERSION}", "--build-arg USERID=${env.USERID} -f ./fmk-dosis-til-tekst-node/Dockerfile ./fmk-dosis-til-tekst-node")
                     image.push()
