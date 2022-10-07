@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import express, {Application} from 'express';
 import swaggerUi from 'swagger-ui-express';
 
