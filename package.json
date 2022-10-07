@@ -10,7 +10,7 @@
     "build": "tsc",
     "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\"",
     "swagger": "tsoa spec",
-    "eslint": " npx eslint --color -c .eslintrc.js --ext .ts ./src"
+    "eslint": "npx eslint --color -c .eslintrc.js --ext .ts ./src"
   },
   "nodemonConfig": {
     "watch": [
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "express": "^4.18.1",
-    "fmk-dosis-til-tekst-ts-commonjs": "1.2.20",
+    "fmk-dosis-til-tekst-ts-commonjs": "1.2.21-SNAPSHOT",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^4.5.0"
