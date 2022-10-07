@@ -1,4 +1,4 @@
-import {Body, Controller, Post, Route} from 'tsoa';
+import {Body, Controller, Get, Post, Route} from 'tsoa';
 import {GetDosageProposalResultDTO} from '../models/request/GetDosageProposalResultDTO';
 import {DosisTilTekstService} from '../services/dosisTilTekstService';
 import {DosageProposalXML} from 'fmk-dosis-til-tekst-ts-commonjs';
@@ -11,6 +11,12 @@ import {DosageTranslationCombinedDTO} from '../models/response/DosageTranslation
 
 @Route('')
 export class DosisTilTekstController extends Controller {
+
+    @Get('/health')
+    public async health(): Promise<string> {
+        this.setStatus(200);
+        return new DosisTilTekstService().health();
+    }
 
     @Post('/getDosageProposalResult')
     public async getDosageProposalResult(@Body() requestBody: GetDosageProposalResultDTO): Promise<DosageProposalXML> {

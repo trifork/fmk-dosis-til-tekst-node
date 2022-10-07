@@ -18,6 +18,10 @@ import {DosageTranslationCombinedDTO} from '../models/response/DosageTranslation
 
 
 export class DosisTilTekstService {
+    public health() {
+        return 'Ok';
+    }
+
     public getDosageProposalResult(requestDTO: GetDosageProposalResultDTO): DosageProposalXML {
         let beginDateArray = [];
         let endDateArray = [];

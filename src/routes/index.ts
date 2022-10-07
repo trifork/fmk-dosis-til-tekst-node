@@ -4,7 +4,9 @@ import {DosisTilTekstController} from '../controllers/dosisTilTekstController';
 const router = express.Router();
 
 router.get('/health', async (_req, res) => {
-    res.status(200).send('Ok');
+    const controller = new DosisTilTekstController();
+    const response = await controller.health();
+    return res.send(response);
 });
 
 router.post('/getDosageProposalResult', async (_req, res) => {
