@@ -20,23 +20,23 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: Checkout code 
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: Clean and install dependencies
-    - run: npm ci
-    
-    - name: Run ESLint
-    - run: npm run eslint
-    
-    - name: Run swagger
-    - run: npm run swagger
-    
-    - name: Build
-    - run: npm run start
+      - name: Checkout code 
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Clean and install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run eslint
+
+      - name: Run swagger
+        run: npm run swagger
+
+      - name: Build
+        run: npm run start
