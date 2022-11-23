@@ -1,6 +1,9 @@
 # Node.JS API for the [fmk-dosis-til-tekst-ts](https://github.com/trifork/fmk-dosis-til-tekst-ts) component
 This project exposes an API that calls the [fmk-dosis-til-tekst-ts](https://github.com/trifork/fmk-dosis-til-tekst-ts) library.
 
+## Prerequisites
+- Node.js latest version
+
 ## Setup
 1. run `npm install` in the terminal
 2. run `npm run start` in the terminal, which should result in:

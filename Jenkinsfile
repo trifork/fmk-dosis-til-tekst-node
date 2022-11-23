@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     configFileProvider([configFile(fileId: 'unique_userid', targetLocation: 'uniqueUserid.py')]) {
-                        env.USERID = sh script: "python3 uniqueUserid.py dosistiltekst", returnStdout: true
+                        env.USERID = sh script: "python3 uniqueUserid.py fmk-dosistiltekst", returnStdout: true
                         env.USERID = env.USERID.trim()
                     }
 
