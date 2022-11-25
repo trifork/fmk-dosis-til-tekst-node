@@ -7,24 +7,40 @@ import {logger} from './logger';
 
 const PORT = process.env.PORT || 8000;
 
-// express.js
+// use express.js
 const app: Application = express();
 app.use(express.json());
 
-// logging every request with pino
-const myLogger = function (req: any, res: any, next: () => void) {
+
+// add middleware for logging every request
+const requestLogger = function (req: any, res: any, next: () => void) {
     logger.info('Request received: ' + req.path);
     next();
 };
-app.use(myLogger);
+app.use(requestLogger);
 
-// routing
+
+// configure routing
 app.use(Router);
 
-// swagger
+
+// add middleware for logging every error
+const errorLogger = function (err: any, req: any, res: any, next: () => void) {
+    logger.error(err.stack);
+    res.status(500).json({
+        msg: err.message,
+        success: false
+    });
+};
+app.use(errorLogger);
+
+
+// add swagger api documentation
 const swaggerDocument = require('./swagger.json');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+
+// start server
 app.listen(PORT, () => {
     console.log('Server is running on port', PORT);
 });
