@@ -8,8 +8,7 @@ RUN addgroup --system fmk-dosistiltekst --gid ${USERID} && adduser --system --gr
 
 WORKDIR /app
 COPY ["*.json",".npmrc", "./"]
-RUN npm install
-#RUN npm install --omit=dev
+RUN npm install --omit=dev
 RUN chown -R fmk-dosistiltekst:fmk-dosistiltekst /app/
 USER fmk-dosistiltekst:fmk-dosistiltekst
 COPY src src
