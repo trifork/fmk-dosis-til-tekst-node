@@ -1,6 +1,6 @@
 FROM node:18
 ARG USERID=9999
-#ENV NODE_ENV=production
+ENV NODE_ENV=production
 ENV TZ=Europe/Copenhagen
 ENV npm_config_cache=/app/.npm
 
