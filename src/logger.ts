@@ -2,7 +2,10 @@ import pino from 'pino';
 
 export const logger = pino({
     transport: {
-        target: 'pino-pretty'
+        target: 'pino-pretty',
+        options: {
+            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss,l'
+        }
     },
     level: 'info'
 });
