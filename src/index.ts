@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8000;
 
 // use express.js
 const app: Application = express();
-app.use(express.json());
+app.use(express.json({limit: '1mb'}));
 
 
 // add middleware for logging every request
