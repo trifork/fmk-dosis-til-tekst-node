@@ -3,7 +3,7 @@ import express, {Application} from 'express';
 import swaggerUi from 'swagger-ui-express';
 
 import Router from './routes';
-import {logger} from './logger';
+import {logger} from './logger/logger';
 
 const PORT = process.env.PORT || 8000;
 
