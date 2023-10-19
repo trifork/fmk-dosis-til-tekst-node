@@ -7,7 +7,7 @@ ENV npm_config_cache=/app/.npm
 RUN addgroup --system fmk-dosistiltekst --gid ${USERID} && adduser --system --group fmk-dosistiltekst --uid ${USERID}
 
 WORKDIR /app
-COPY ["*.json","./"]
+COPY ["*.json",".npmrc","./"]
 RUN npm ci --production && npm cache clean --force
 RUN chown -R fmk-dosistiltekst:fmk-dosistiltekst /app/
 USER fmk-dosistiltekst:fmk-dosistiltekst
