@@ -19,7 +19,7 @@ import {DosageTranslationCombinedDTO} from '../models/response/DosageTranslation
 
 export class DosisTilTekstService {
     public health() {
-        return 'Ok';
+        return '{"status":"OK"}';
     }
 
     public getDosageProposalResult(requestDTO: GetDosageProposalResultDTO): DosageProposalXML {
