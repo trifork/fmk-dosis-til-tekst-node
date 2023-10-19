@@ -8,7 +8,7 @@ RUN addgroup --system fmk-dosistiltekst --gid ${USERID} && adduser --system --gr
 
 WORKDIR /app
 COPY ["*.json","./"]
-RUN npm ci --production && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 RUN chown -R fmk-dosistiltekst:fmk-dosistiltekst /app/
 USER fmk-dosistiltekst:fmk-dosistiltekst
 COPY src src
