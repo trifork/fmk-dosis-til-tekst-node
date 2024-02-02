@@ -5,4 +5,5 @@ libraries{
         image_user = 'fmk-dosistiltekst'
         java_version = 11
     }
+    sonarqube_node
 }
