@@ -48,22 +48,15 @@
                         </arguments>
                     </configuration>
                 </execution>
-              <!--<execution>
-                <id>npm-build</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>npm</executable>
-                  <arguments>
-                    <argument>run</argument>
-                    <argument>prod</argument>
-                  </arguments>
-                </configuration>
-              </execution>-->
             </executions>
           </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
           <!--<plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <version>3.2.0</version>
