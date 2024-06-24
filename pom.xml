@@ -29,10 +29,25 @@
                   <executable>npm</executable>
                   <arguments>
                     <argument>ci</argument>
-                    <argument>--production</argument>
+                    <argument>--omit=dev</argument>
                   </arguments>
                 </configuration>
               </execution>
+                <execution>
+                    <id>cache-clean</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>npm</executable>
+                        <arguments>
+                            <argument>cache</argument>
+                            <argument>clean</argument>
+                            <argument>--force</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
               <!--<execution>
                 <id>npm-build</id>
                 <phase>compile</phase>
