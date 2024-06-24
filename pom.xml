@@ -57,27 +57,53 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-          <!--<plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>3.2.0</version>
-            <executions>
-              <execution>
-                <id>copy-resources</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.basedir}/../backend/src/main/resources/public</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>dist/magi-frontend</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>-->
+            <plugin>
+                <?m2e execute onConfiguration?>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                <execution>
+                    <id>update-pom-version-in-package-json-files</id>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                    <phase>none</phase>
+                    <configuration>
+                        <basedir>${basedir}</basedir>
+                        <includes>
+                            <include>package.json</include>
+                        </includes>
+                        <replacements>
+                            <replacement>
+                                <token>\"(version)\": \"((?!file:)).*\"</token>
+                                <value>"$1": "${project.version}"</value>
+                            </replacement>
+                        </replacements>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>update-pom-version-in-package-lock-json-files</id>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                    <phase>none</phase>
+                    <configuration>
+                        <basedir>${basedir}</basedir>
+                        <includes>
+                            <include>package-lock.json</include>
+                        </includes>
+                        <replacements>
+                            <replacement>
+                                <token>\"(\d+\.\d+\.\d+-SNAPSHOT\")</token>
+                                <value>"${project.version}"</value>
+                            </replacement>
+                        </replacements>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
