@@ -21,7 +21,7 @@
             <executions>
               <execution>
                 <id>npm-install</id>
-                <phase>process-resources</phase>
+                <phase>compile</phase>
                 <goals>
                   <goal>exec</goal>
                 </goals>
@@ -35,7 +35,7 @@
               </execution>
                 <execution>
                     <id>cache-clean</id>
-                    <phase>process-resources</phase>
+                    <phase>compile</phase>
                     <goals>
                         <goal>exec</goal>
                     </goals>
@@ -63,45 +63,45 @@
                 <artifactId>replacer</artifactId>
                 <version>1.5.3</version>
                 <executions>
-                <execution>
-                    <id>update-pom-version-in-package-json-files</id>
-                    <goals>
-                        <goal>replace</goal>
-                    </goals>
-                    <phase>none</phase>
-                    <configuration>
-                        <basedir>${basedir}</basedir>
-                        <includes>
-                            <include>package.json</include>
-                        </includes>
-                        <replacements>
-                            <replacement>
-                                <token>\"(version)\": \"((?!file:)).*\"</token>
-                                <value>"$1": "${project.version}"</value>
-                            </replacement>
-                        </replacements>
-                    </configuration>
-                </execution>
+                    <execution>
+                        <id>update-pom-version-in-package-json-files</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <basedir>${basedir}</basedir>
+                            <includes>
+                                <include>package.json</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>\"(version)\": \"((?!file:)).*\"</token>
+                                    <value>"$1": "${project.version}"</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                <execution>
-                    <id>update-pom-version-in-package-lock-json-files</id>
-                    <goals>
-                        <goal>replace</goal>
-                    </goals>
-                    <phase>none</phase>
-                    <configuration>
-                        <basedir>${basedir}</basedir>
-                        <includes>
-                            <include>package-lock.json</include>
-                        </includes>
-                        <replacements>
-                            <replacement>
-                                <token>\"(\d+\.\d+\.\d+-SNAPSHOT\")</token>
-                                <value>"${project.version}"</value>
-                            </replacement>
-                        </replacements>
-                    </configuration>
-                </execution>
+                    <execution>
+                        <id>update-pom-version-in-package-lock-json-files</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <basedir>${basedir}</basedir>
+                            <includes>
+                                <include>package-lock.json</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>\"(\d+\.\d+\.\d+-SNAPSHOT\")</token>
+                                    <value>"${project.version}"</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
