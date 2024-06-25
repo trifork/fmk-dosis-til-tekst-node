@@ -1,6 +1,6 @@
 {
   "name": "fmk-dosis-til-tekst-node",
-  "version": "1.0.9-SNAPSHOT",
+  "version": "1.0.10-SNAPSHOT",
   "description": "",
   "main": "index.js",
   "scripts": {
