@@ -39,6 +39,12 @@ app.use(errorLogger);
 const swaggerDocument = require('./swagger.json');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal =>
+    process.on(signal, () => {
+        console.log(`Received ${signal}, terminating`);
+        process.exit();
+    })
+);
 
 // start server
 app.listen(PORT, () => {
