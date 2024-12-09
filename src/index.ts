@@ -41,12 +41,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal =>
     process.on(signal, () => {
-        console.log(`Received ${signal}, terminating`);
+        logger.info(`Received ${signal}, terminating`);
         process.exit();
     })
 );
 
 // start server
 app.listen(PORT, () => {
-    console.log('Server is running on port', PORT);
+    logger.info(`Server is running on port ${PORT}`);
 });
