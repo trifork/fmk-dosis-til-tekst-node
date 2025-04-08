@@ -7,14 +7,14 @@ import {
     DosageTypeCalculator144,
     Factory
 } from 'fmk-dosis-til-tekst-ts-commonjs';
-import {GetDosageProposalResultDTO} from '../models/request/GetDosageProposalResultDTO';
-import {DosageWrapperWithOptionsDTO} from '../models/request/DosageWrapperWithOptionsDTO';
-import {DosageWrapperWithOptionsAndMaxLengthDTO} from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
-import {DosageWrapperWithMaxLengthDTO} from '../models/request/DosageWrapperWithMaxLengthDTO';
-import {DosageWrapperDTO} from '../models/request/DosageWrapperDTO';
-import {DailyDosis} from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
-import {DosageTranslationDTO} from '../models/response/DosageTranslationDTO';
-import {DosageTranslationCombinedDTO} from '../models/response/DosageTranslationCombinedDTO';
+import { GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO';
+import { DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO';
+import { DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
+import { DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO';
+import { DosageWrapperDTO } from '../models/request/DosageWrapperDTO';
+import { DailyDosis } from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
+import { DosageTranslationDTO } from '../models/response/DosageTranslationDTO';
+import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO';
 
 
 export class DosisTilTekstService {
@@ -23,6 +23,9 @@ export class DosisTilTekstService {
     }
 
     public getDosageProposalResult(requestDTO: GetDosageProposalResultDTO): DosageProposalXML {
+        this.fixDateOnlyStringsArray(requestDTO.beginDates);
+        this.fixDateOnlyStringsArray(requestDTO.endDates);
+
         let beginDateArray = [];
         let endDateArray = [];
 
@@ -52,6 +55,8 @@ export class DosisTilTekstService {
     }
 
     public convertCombined(requestDTO: DosageWrapperWithOptionsDTO): DosageTranslationCombinedDTO | null {
+        this.fixDateOnlyStrings(requestDTO);
+
         let conversion = CombinedTextConverter.convertStr(requestDTO.dosageJson, requestDTO.options);
         if (conversion === null) {
             return null;
@@ -76,11 +81,15 @@ export class DosisTilTekstService {
     }
 
     public convertLongText(requestDTO: DosageWrapperWithOptionsDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         let converter = Factory.getLongTextConverter();
         return converter.convertStr(requestDTO.dosageJson, requestDTO.options);
     }
 
     public convertShortText(requestDTO: DosageWrapperWithOptionsAndMaxLengthDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         let converter = Factory.getShortTextConverter();
         let result: string;
         if (requestDTO.maxLength !== null && requestDTO.maxLength !== undefined) {
@@ -92,6 +101,8 @@ export class DosisTilTekstService {
     }
 
     public getShortTextConverterClassName(requestDTO: DosageWrapperWithMaxLengthDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         let result: string;
         if (requestDTO.maxLength !== null && requestDTO.maxLength !== undefined) {
             result = Factory.getShortTextConverter().getConverterClassName(JSON.parse(requestDTO.dosageJson),
@@ -103,20 +114,70 @@ export class DosisTilTekstService {
     }
 
     public getLongTextConverterClassName(requestDTO: DosageWrapperDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         return Factory.getLongTextConverter().getConverterClassName(JSON.parse(requestDTO.dosageJson));
     }
 
     public getDosageType(requestDTO: DosageWrapperDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         let dosageType = DosageTypeCalculator.calculateStr(requestDTO.dosageJson);
         return dosageType.toString();
     }
 
     public getDosageType144(requestDTO: DosageWrapperDTO): string {
+        this.fixDateOnlyStrings(requestDTO);
+
         let dosageType = DosageTypeCalculator144.calculateStr(requestDTO.dosageJson);
         return dosageType.toString();
     }
 
     public calculateDailyDosis(requestDTO: DosageWrapperDTO): DailyDosis {
+        this.fixDateOnlyStrings(requestDTO);
+
         return DailyDosisCalculator.calculateStr(requestDTO.dosageJson);
+    }
+
+    private fixDateOnlyStrings(requestDTO: DosageWrapperDTO) {
+        // Workaround: Modify date strings with format "2025-04-08" -> "2025-04-08 00:00:00"
+        // Old fmk-dosistiltekst-wrapper uses java milliseconds-since-epoch longs to represent dates, and is unaffected by this workaround
+        // The purpose of this workaround is to ensure that date-only strings sent by fmk-dosis-til-tekst-java-client are interpreted correctly
+        // until this service can be upgraded to use fmk-dosis-til-tekst-ts-commonjs 2.*
+        //
+        // For further explanation see FMK-10650
+        if (requestDTO.dosageJson) {
+            const json = JSON.parse(requestDTO.dosageJson);
+
+            this.fixDates(json)
+
+            requestDTO.dosageJson = JSON.stringify(json);
+        }
+    }
+
+    private fixDates(obj: unknown): void {
+        if (Array.isArray(obj)) {
+            for (const value of obj) {
+                this.fixDates(value);
+            }
+        } else if (typeof obj === 'object' && obj !== null) {
+            const entries = Object.entries(obj) as [string, unknown][];
+            for (const [key, value] of entries) {
+                if (key === "date" && typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                    (obj as Record<string, unknown>)[key] = value + " 00:00:00";
+                } else {
+                    this.fixDates(value);
+                }
+            }
+        }
+    }
+
+    private fixDateOnlyStringsArray(ar: string[]) {
+        for (let i = 0; i < ar.length; i++) {
+            const value = ar[i];
+            if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                ar[i] = value + " 00:00:00";
+            }
+        }
     }
 }
