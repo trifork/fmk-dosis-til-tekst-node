@@ -6,7 +6,7 @@ import { ValidateError } from 'tsoa';
 import { RegisterRoutes } from "../build/routes";
 import { logger } from './logger/logger';
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 
 // use express.js
 const app: Application = express();
