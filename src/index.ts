@@ -1,42 +1,71 @@
-import 'express-async-errors';
-import express, {Application} from 'express';
+import express, { Application, json, NextFunction, Request, Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 
-import Router from './routes';
-import {logger} from './logger/logger';
+// import Router from './routes';
+import { ValidateError } from 'tsoa';
+import { RegisterRoutes } from "../build/routes";
+import { logger } from './logger/logger';
 
-const PORT = process.env.PORT || 8000;
+// const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8087;
 
 // use express.js
 const app: Application = express();
-app.use(express.json({limit: '20mb'}));
+
+app.use(express.json({ limit: '20mb' }));
 
 
 // add middleware for logging every request
-const requestLogger = function (req: any, res: any, next: () => void) {
-    logger.info('Request received: ' + req.path);
+const requestLogger = (req: Request, res: Response, next: NextFunction): void => {
+    const body = req.body;
+    let bodyText;
+    switch (typeof body) {
+        case 'string': 
+        bodyText = body;
+        break;
+        case 'object': 
+        bodyText = JSON.stringify(body);
+        break;
+        default:
+        bodyText = "";
+        break;
+    }
+
+    // logger.info(`Request received: ${req.method} ${req.path}`);
+    const urlParams = Object.entries(req.query).map(([k, v]) => `${k}=${String(v)}`).join("&");
+    logger.info(`Request received: ${req.method} ${req.path} ${urlParams} ${bodyText}`);
     next();
 };
 app.use(requestLogger);
 
 
 // configure routing
-app.use(Router);
+app.use(json());
 
+RegisterRoutes(app);
 
-// add middleware for logging every error
-const errorLogger = function (err: any, req: any, res: any, next: () => void) {
-    logger.error(err.stack);
-    res.status(500).json({
-        msg: err.message,
-        success: false
-    });
-};
-app.use(errorLogger);
-
+app.use(function errorHandler(
+    err: Error,
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void {
+    if (err instanceof ValidateError) {
+        logger.warn(`Caught Validation Error for ${req.path}: ${JSON.stringify(err.fields)}`);
+        res.status(422).json({
+            message: "Validation Failed",
+            details: err?.fields,
+        });
+    } else if (err instanceof Error) {
+        logger.error(err.stack);
+        res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
 
 // add swagger api documentation
-const swaggerDocument = require('./swagger.json');
+const swaggerDocument = require('../target/generated-sources/openapi/swagger.json');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal =>

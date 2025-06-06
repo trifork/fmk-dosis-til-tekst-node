@@ -1,31 +1,30 @@
 import {
     CombinedTextConverter,
+    DailyDosis,
     DailyDosisCalculator,
     DosageProposalXML,
     DosageProposalXMLGenerator,
+    DosageType,
     DosageTypeCalculator,
     DosageTypeCalculator144,
-    Factory
-} from 'fmk-dosis-til-tekst-ts-commonjs';
+    Factory,
+    TextOptions
+} from 'fmk-dosis-til-tekst-ts';
 import { GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO';
 import { DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO';
 import { DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
 import { DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO';
 import { DosageWrapperDTO } from '../models/request/DosageWrapperDTO';
-import { DailyDosis } from 'fmk-dosis-til-tekst-ts-commonjs/dist/lib/DailyDosis';
 import { DosageTranslationDTO } from '../models/response/DosageTranslationDTO';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO';
 
 
 export class DosisTilTekstService {
     public health() {
-        return '{"status":"OK"}';
+        return { "status": "OK" };
     }
 
     public getDosageProposalResult(requestDTO: GetDosageProposalResultDTO): DosageProposalXML {
-        this.fixDateOnlyStringsArray(requestDTO.beginDates);
-        this.fixDateOnlyStringsArray(requestDTO.endDates);
-
         let beginDateArray = [];
         let endDateArray = [];
 
@@ -34,8 +33,8 @@ export class DosisTilTekstService {
             beginDateArray.push(beginDateJS);
 
             let endDateJS: any = null;
-            if (requestDTO.endDates[i] !== null) {
-                endDateJS = new Date(requestDTO.endDates[i]);
+            if (requestDTO.endDates && requestDTO.endDates[i]) {
+                endDateJS = new Date(requestDTO.endDates[i]!);
             }
 
             endDateArray.push(endDateJS);
@@ -44,20 +43,20 @@ export class DosisTilTekstService {
         if (requestDTO.shortTextMaxLength === undefined) {
             return DosageProposalXMLGenerator.generateXMLSnippet(requestDTO.type, requestDTO.iteration,
                 requestDTO.mapping, requestDTO.unitTextSingular, requestDTO.unitTextPlural,
-                requestDTO.supplementaryText, beginDateArray, endDateArray, requestDTO.fmkversion,
+                requestDTO.supplementaryText!, beginDateArray, endDateArray, requestDTO.fmkversion,
                 requestDTO.dosageProposalVersion);
         } else {
             return DosageProposalXMLGenerator.generateXMLSnippet(requestDTO.type, requestDTO.iteration,
                 requestDTO.mapping, requestDTO.unitTextSingular, requestDTO.unitTextPlural,
-                requestDTO.supplementaryText, beginDateArray, endDateArray, requestDTO.fmkversion,
+                requestDTO.supplementaryText!, beginDateArray, endDateArray, requestDTO.fmkversion,
                 requestDTO.dosageProposalVersion, requestDTO.shortTextMaxLength);
         }
     }
 
     public convertCombined(requestDTO: DosageWrapperWithOptionsDTO): DosageTranslationCombinedDTO | null {
-        this.fixDateOnlyStrings(requestDTO);
-
-        let conversion = CombinedTextConverter.convertStr(requestDTO.dosageJson, requestDTO.options);
+        const options = this.convertLegacyOptions(requestDTO.options);
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        let conversion = CombinedTextConverter.convert(dosage, options!);
         if (conversion === null) {
             return null;
         }
@@ -81,102 +80,69 @@ export class DosisTilTekstService {
     }
 
     public convertLongText(requestDTO: DosageWrapperWithOptionsDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
         let converter = Factory.getLongTextConverter();
-        return converter.convertStr(requestDTO.dosageJson, requestDTO.options);
+        const options = this.convertLegacyOptions(requestDTO.options);
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        return converter.convert(dosage, options);
     }
 
     public convertShortText(requestDTO: DosageWrapperWithOptionsAndMaxLengthDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
+        const options = this.convertLegacyOptions(requestDTO.options);
         let converter = Factory.getShortTextConverter();
         let result: string;
-        if (requestDTO.maxLength !== null && requestDTO.maxLength !== undefined) {
-            result = converter.convertStr(requestDTO.dosageJson, requestDTO.options, requestDTO.maxLength);
-        } else {
-            result = converter.convertStr(requestDTO.dosageJson, requestDTO.options);
-        }
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        result = converter.convert(dosage, options, requestDTO.maxLength);
         return result;
     }
 
     public getShortTextConverterClassName(requestDTO: DosageWrapperWithMaxLengthDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
         let result: string;
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
         if (requestDTO.maxLength !== null && requestDTO.maxLength !== undefined) {
-            result = Factory.getShortTextConverter().getConverterClassName(JSON.parse(requestDTO.dosageJson),
+            result = Factory.getShortTextConverter().getConverterClassName(dosage,
                 requestDTO.maxLength);
         } else {
-            result = Factory.getShortTextConverter().getConverterClassName(JSON.parse(requestDTO.dosageJson));
+            result = Factory.getShortTextConverter().getConverterClassName(dosage);
         }
         return result;
     }
 
     public getLongTextConverterClassName(requestDTO: DosageWrapperDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
-        return Factory.getLongTextConverter().getConverterClassName(JSON.parse(requestDTO.dosageJson));
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        return Factory.getLongTextConverter().getConverterClassName(dosage);
     }
 
-    public getDosageType(requestDTO: DosageWrapperDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
-        let dosageType = DosageTypeCalculator.calculateStr(requestDTO.dosageJson);
-        return dosageType.toString();
+    public getDosageType(requestDTO: DosageWrapperDTO): DosageType {
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        let dosageType = DosageTypeCalculator.calculate(dosage);
+        return dosageType;
     }
 
-    public getDosageType144(requestDTO: DosageWrapperDTO): string {
-        this.fixDateOnlyStrings(requestDTO);
-
-        let dosageType = DosageTypeCalculator144.calculateStr(requestDTO.dosageJson);
-        return dosageType.toString();
+    public getDosageType144(requestDTO: DosageWrapperDTO): DosageType {
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        let dosageType = DosageTypeCalculator144.calculate(dosage);
+        return dosageType;
     }
 
     public calculateDailyDosis(requestDTO: DosageWrapperDTO): DailyDosis {
-        this.fixDateOnlyStrings(requestDTO);
-
-        return DailyDosisCalculator.calculateStr(requestDTO.dosageJson);
+        const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        return DailyDosisCalculator.calculate(dosage);
     }
 
-    private fixDateOnlyStrings(requestDTO: DosageWrapperDTO) {
-        // Workaround: Modify date strings with format "2025-04-08" -> "2025-04-08 00:00:00"
-        // Old fmk-dosistiltekst-wrapper uses java milliseconds-since-epoch longs to represent dates, and is unaffected by this workaround
-        // The purpose of this workaround is to ensure that date-only strings sent by fmk-dosis-til-tekst-java-client are interpreted correctly
-        // until this service can be upgraded to use fmk-dosis-til-tekst-ts-commonjs 2.*
-        //
-        // For further explanation see FMK-10650
-        if (requestDTO.dosageJson) {
-            const json = JSON.parse(requestDTO.dosageJson);
+    private convertLegacyOptions(options: string | TextOptions | undefined): TextOptions | undefined {
+        if (options) {
+            switch (options) {
+                case "STANDARD":
+                case "0":
+                    return TextOptions.STANDARD;
 
-            this.fixDates(json)
+                case "VKA":
+                case "1":
+                    return TextOptions.VKA;
 
-            requestDTO.dosageJson = JSON.stringify(json);
-        }
-    }
-
-    private fixDates(obj: unknown): void {
-        if (Array.isArray(obj)) {
-            for (const value of obj) {
-                this.fixDates(value);
-            }
-        } else if (typeof obj === 'object' && obj !== null) {
-            const entries = Object.entries(obj) as [string, unknown][];
-            for (const [key, value] of entries) {
-                if (key === "date" && typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-                    (obj as Record<string, unknown>)[key] = value + " 00:00:00";
-                } else {
-                    this.fixDates(value);
-                }
-            }
-        }
-    }
-
-    private fixDateOnlyStringsArray(ar: string[]) {
-        for (let i = 0; i < ar.length; i++) {
-            const value = ar[i];
-            if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-                ar[i] = value + " 00:00:00";
+                case "VKA_WITH_MARKUP":
+                case "2":
+                    return TextOptions.VKA_WITH_MARKUP;
             }
         }
     }
