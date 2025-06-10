@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 
 // import Router from './routes';
 import { ValidateError } from 'tsoa';
-import { RegisterRoutes } from "../build/routes";
+import { RegisterRoutes } from "../target/routes";
 import { logger } from './logger/logger';
 
 const PORT = process.env.PORT || 8000;

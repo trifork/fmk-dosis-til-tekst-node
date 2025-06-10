@@ -9,6 +9,6 @@
     "specVersion": 3
   },
   "routes": {
-    "routesDir": "build"
+    "routesDir": "target"
   }
 }

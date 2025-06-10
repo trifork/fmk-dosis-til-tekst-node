@@ -13,5 +13,6 @@ RUN chown -R fmk-dosistiltekst:fmk-dosistiltekst /app/
 USER fmk-dosistiltekst:fmk-dosistiltekst
 COPY src src
 COPY target target
+COPY tsconfig.json tsconfig.json
 
 CMD ["node","--max-old-space-size=370","/app/node_modules/.bin/ts-node","--transpile-only","src/index.ts"]
