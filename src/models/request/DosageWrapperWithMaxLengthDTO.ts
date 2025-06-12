@@ -1,4 +1,5 @@
-export interface DosageWrapperWithMaxLengthDTO {
-    dosageJson: string;
-    maxLength: number;
+import { DosageWrapperDTO } from "./DosageWrapperDTO";
+
+export interface DosageWrapperWithMaxLengthDTO extends DosageWrapperDTO {
+    maxLength?: number;
 }
