@@ -1,5 +1,5 @@
 import { Request as ExpressRequest } from 'express';
-import path from 'path';
+import { DailyDosis, DosageProposalXML, DosageType } from 'fmk-dosis-til-tekst-ts';
 import { Body, Controller, Get, Post, Produces, Query, Request, Route } from 'tsoa';
 import { DateFormattedString } from '../models/request/DateFormattedString';
 import { DosageWrapperDTO } from '../models/request/DosageWrapperDTO';
@@ -11,28 +11,9 @@ import { TextOption } from '../models/request/TextOption';
 import DosageProposalDTO from '../models/response/DosageProposalDTO';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO';
 import { DosisTilTekstService } from '../services/DosisTilTekstService';
-import { findLatestModificationDate, findParentContaining } from "./fsUtil";
-import { DailyDosis, DosageProposalXML, DosageType } from 'fmk-dosis-til-tekst-ts';
 
 @Route('')
 export class DosisTilTekstController extends Controller {
-
-    static lastModified: Date;
-    static {
-        const rootDir = findParentContaining(__dirname, "package.json");
-
-        // NOTE: Not currently in use, but can be used in a later refinement.
-        // These are the resources we use to calculate the Last-Modified http header. In order to make http caching work, 
-        // Last-Modified needs to be
-        //   1. Stable/equal accross different instances of this service in a cluster
-        //   2. Guarenteed to change whenever code or dependencies changes (most importantly when fmk-dosis-til-tekst-ts is upgraded
-        const resourcesDefiningLastModified = rootDir && [
-            path.join(rootDir, "src"),
-            path.join(rootDir, "package.json")
-        ]
-
-        DosisTilTekstController.lastModified = resourcesDefiningLastModified && findLatestModificationDate(...resourcesDefiningLastModified) || new Date();
-    }
 
     @Get('/health')
     @Produces("application/json")
@@ -97,17 +78,14 @@ export class DosisTilTekstController extends Controller {
     @Get('/convertCombined')
     @Produces("application/json")
     public getConvertCombined(@Query() dosageJson: string, @Query() options?: TextOption): DosageTranslationCombinedDTO | null {
-        return new DosisTilTekstService().convertCombined({
-            dosageJson,
-            options
-        });
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null;
     }
 
     @Post('/convertLongText')
     @Produces("text/plain; charset=utf-8")
     public postConvertLongText(@Request() req: ExpressRequest, @Body() requestBody: DosageWrapperWithOptionsDTO): string {
         const result = new DosisTilTekstService().convertLongText(requestBody);
-        //this.setStatus(200);
 
         req.res?.header("Content-Type", "text/plain; charset=utf-8")
         req.res?.send(result);
@@ -117,15 +95,8 @@ export class DosisTilTekstController extends Controller {
     @Get('/convertLongText')
     @Produces("text/plain; charset=utf-8")
     public getConvertLongText(@Request() req: ExpressRequest, @Query() dosageJson: string, @Query() options?: TextOption): string {
-        const requestBody = {
-            dosageJson,
-            options
-        };
-        const result = new DosisTilTekstService().convertLongText(requestBody);
-        req.res?.header("Content-Type", "text/plain; charset=utf-8")
-        req.res?.send(result);
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
         return "";
-
     }
 
     @Post('/convertShortText')
@@ -141,21 +112,13 @@ export class DosisTilTekstController extends Controller {
     @Get('/convertShortText')
     @Produces("text/plain; charset=utf-8")
     public getConvertShortText(@Request() req: ExpressRequest, @Query() dosageJson: string, @Query() options?: TextOption, @Query() maxLength?: number): string {
-        const requestBody = {
-            dosageJson,
-            options,
-            maxLength: maxLength
-        };
-        const result = new DosisTilTekstService().convertShortText(requestBody);
-
-        req.res?.header("Content-Type", "text/plain; charset=utf-8")
-        req.res?.send(result);
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
         return "";
     }
 
     @Post('/getShortTextConverterClassName')
     @Produces("text/plain; charset=utf-8")
-    public getShortTextConverterClassName(@Request() req: ExpressRequest, @Body() requestBody: DosageWrapperWithMaxLengthDTO): string {
+    public postGetShortTextConverterClassName(@Request() req: ExpressRequest, @Body() requestBody: DosageWrapperWithMaxLengthDTO): string {
         const result = new DosisTilTekstService().getShortTextConverterClassName(requestBody);
 
         req.res?.header("Content-Type", "text/plain; charset=utf-8")
@@ -163,9 +126,16 @@ export class DosisTilTekstController extends Controller {
         return "";
     }
 
+    @Get('/getShortTextConverterClassName')
+    @Produces("text/plain; charset=utf-8")
+    public getGetShortTextConverterClassName(@Request() req: ExpressRequest, @Query() dosageJson: string, @Query() options?: TextOption, @Query() maxLength?: number): string {
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return "";
+    }
+
     @Post('/getLongTextConverterClassName')
     @Produces("text/plain; charset=utf-8")
-    public getLongTextConverterClassName(@Request() req: ExpressRequest, @Body() requestBody: DosageWrapperDTO): string {
+    public postGetLongTextConverterClassName(@Request() req: ExpressRequest, @Body() requestBody: DosageWrapperDTO): string {
         const result = new DosisTilTekstService().getLongTextConverterClassName(requestBody);
 
         req.res?.header("Content-Type", "text/plain; charset=utf-8")
@@ -173,6 +143,12 @@ export class DosisTilTekstController extends Controller {
         return "";
     }
 
+    @Get('/getLongTextConverterClassName')
+    @Produces("text/plain; charset=utf-8")
+    public getGetLongTextConverterClassName(@Request() req: ExpressRequest, @Query() dosageJson: string): string {
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return "";
+    }
 
     @Post('/getDosageType')
     @Produces("text/plain; charset=utf-8")
@@ -187,13 +163,8 @@ export class DosisTilTekstController extends Controller {
     @Get('/getDosageType')
     @Produces("text/plain; charset=utf-8")
     public getGetDosageType(@Request() req: ExpressRequest, @Query() dosageJson: string): DosageType {
-        const requestBody = {
-            dosageJson
-        };
-        const result = new DosisTilTekstService().getDosageType(requestBody);
-        req.res?.header("Content-Type", "text/plain; charset=utf-8")
-        req.res?.send(result.toString());
-        return result;
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null as any;
     }
 
     @Post('/getDosageType144')
@@ -209,16 +180,9 @@ export class DosisTilTekstController extends Controller {
     @Get('/getDosageType144')
     @Produces("text/plain; charset=utf-8")
     public getGetDosageType144(@Request() req: ExpressRequest, @Query() dosageJson: string): DosageType {
-        const requestBody = {
-            dosageJson
-        };
-        const result = new DosisTilTekstService().getDosageType(requestBody);
-
-        req.res?.header("Content-Type", "text/plain; charset=utf-8")
-        req.res?.send(result.toString());
-        return result;
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null as any;
     }
-
 
     @Post('/calculateDailyDosis')
     @Produces("application/json")
@@ -229,10 +193,8 @@ export class DosisTilTekstController extends Controller {
     @Get('/calculateDailyDosis')
     @Produces("application/json")
     public getCalculateDailyDosis(@Query() dosageJson: string): DailyDosis {
-        const requestBody = {
-            dosageJson
-        };
-        return new DosisTilTekstService().calculateDailyDosis(requestBody);
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null as any;
     }
 }
 
