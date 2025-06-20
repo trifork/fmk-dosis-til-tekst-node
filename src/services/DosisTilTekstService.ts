@@ -8,6 +8,7 @@ import {
     DosageTypeCalculator,
     DosageTypeCalculator144,
     Factory,
+    TextHelper,
     TextOptions
 } from 'fmk-dosis-til-tekst-ts';
 import { GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO';
@@ -17,6 +18,7 @@ import { DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWi
 import { DosageWrapperDTO } from '../models/request/DosageWrapperDTO';
 import { DosageTranslationDTO } from '../models/response/DosageTranslationDTO';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO';
+import { logger } from '../logger/logger';
 
 
 export class DosisTilTekstService {
@@ -56,6 +58,7 @@ export class DosisTilTekstService {
     public convertCombined(requestDTO: DosageWrapperWithOptionsDTO): DosageTranslationCombinedDTO | null {
         const options = this.convertLegacyOptions(requestDTO.options);
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         let conversion = CombinedTextConverter.convert(dosage, options!);
         if (conversion === null) {
             return null;
@@ -83,6 +86,7 @@ export class DosisTilTekstService {
         let converter = Factory.getLongTextConverter();
         const options = this.convertLegacyOptions(requestDTO.options);
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         return converter.convert(dosage, options);
     }
 
@@ -91,6 +95,7 @@ export class DosisTilTekstService {
         let converter = Factory.getShortTextConverter();
         let result: string;
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         result = converter.convert(dosage, options, requestDTO.maxLength);
         return result;
     }
@@ -98,6 +103,7 @@ export class DosisTilTekstService {
     public getShortTextConverterClassName(requestDTO: DosageWrapperWithMaxLengthDTO): string {
         let result: string;
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         if (requestDTO.maxLength !== null && requestDTO.maxLength !== undefined) {
             result = Factory.getShortTextConverter().getConverterClassName(dosage,
                 requestDTO.maxLength);
@@ -109,23 +115,27 @@ export class DosisTilTekstService {
 
     public getLongTextConverterClassName(requestDTO: DosageWrapperDTO): string {
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         return Factory.getLongTextConverter().getConverterClassName(dosage);
     }
 
     public getDosageType(requestDTO: DosageWrapperDTO): DosageType {
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         let dosageType = DosageTypeCalculator.calculate(dosage);
         return dosageType;
     }
 
     public getDosageType144(requestDTO: DosageWrapperDTO): DosageType {
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         let dosageType = DosageTypeCalculator144.calculate(dosage);
         return dosageType;
     }
 
     public calculateDailyDosis(requestDTO: DosageWrapperDTO): DailyDosis {
         const dosage = requestDTO.dosageJson ? JSON.parse(requestDTO.dosageJson) : requestDTO.dosage;
+        this.convertLegacyDateOrDateTime(dosage);
         return DailyDosisCalculator.calculate(dosage);
     }
 
@@ -145,5 +155,50 @@ export class DosisTilTekstService {
                     return TextOptions.VKA_WITH_MARKUP;
             }
         }
+    }
+
+    // TODO remove this when no clients send DateOrDateTime
+    private convertLegacyDateOrDateTime(dosage: any) {
+        function recurse(current: any): void {
+            if (Array.isArray(current)) {
+                for (const item of current) {
+                    recurse(item);
+                }
+            } else if (typeof current === 'object' && current !== null) {
+                for (const key of Object.keys(current)) {
+                    const value = current[key];
+
+                    if (key === 'startDateOrDateTime') {
+                        if (value && typeof value === 'object') {
+                            if ('dateTime' in value) {
+                                // throw new Error('Invalid object: "startDateOrDateTime" contains a "dateTime" property.');
+                                logger.warn('Invalid object: "startDateOrDateTime" contains a "dateTime" property. Dosage: ' + JSON.stringify(dosage));
+                                current['startDate'] = TextHelper.formatDate(new Date(value.dateTime));
+                            }
+                            if ('date' in value) {
+                                current['startDate'] = value.date;
+                            }
+                        }
+                        delete current[key];
+                    } else if (key === 'endDateOrDateTime') {
+                        if (value && typeof value === 'object') {
+                            if ('dateTime' in value) {
+                                // throw new Error('Invalid object: "endDateOrDateTime" contains a "dateTime" property.');
+                                logger.warn('Invalid object: "endDateOrDateTime" contains a "dateTime" property. Dosage: ' + JSON.stringify(dosage));
+                                current['endDate'] = TextHelper.formatDate(new Date(value.dateTime));
+                            }
+                            if ('date' in value) {
+                                current['endDate'] = value.date;
+                            }
+                        }
+                        delete current[key];
+                    } else {
+                        recurse(value);
+                    }
+                }
+            }
+        }
+
+        recurse(dosage);
     }
 }
