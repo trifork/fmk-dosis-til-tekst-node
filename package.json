@@ -1,6 +1,6 @@
 {
   "name": "fmk-dosis-til-tekst-node",
-  "version": "2.0.1-FMK-10955_NSPFMKSUP-122_Ret_d2t_vedr_i_begge_ojne-SNAPSHOT",
+  "version": "2.0.2-SNAPSHOT",
   "description": "",
   "main": "index.js",
   "scripts": {
