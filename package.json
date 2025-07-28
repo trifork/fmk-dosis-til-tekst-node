@@ -1,6 +1,6 @@
 {
   "name": "fmk-dosis-til-tekst-node",
-  "version": "2.0.1-SNAPSHOT",
+  "version": "2.0.1-FMK-10955_NSPFMKSUP-122_Ret_d2t_vedr_i_begge_ojne-SNAPSHOT",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
-    "fmk-dosis-til-tekst-ts": "2.0.2",
+    "fmk-dosis-til-tekst-ts": "2.0.3",
     "morgan": "^1.10.0",
     "pino": "^9.7.0",
     "swagger-ui-express": "^5.0.1",
