@@ -20,7 +20,7 @@ export async function rerouteGetToPost(req: ExpressRequest, res: ExpressResponse
             if (Array.isArray(dosageJson)) {
                 throw new Error("Only one dosageJson parameter allowed");
             }
-            req.body = { dosage: JSON.parse(decodeURIComponent(dosageJson as string)) }
+            req.body = { dosage: JSON.parse(dosageJson as string) }
             if (req.query.options) {
                 req.body.options = req.query.options;
             }
