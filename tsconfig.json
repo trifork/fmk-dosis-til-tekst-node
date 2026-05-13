@@ -1,18 +1,35 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "./build",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    "outDir": "./target/js",
+    "rootDir": "./src",
+
     "strict": true,
+
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "Node",
-    "types": [
-      "node"
-    ],
-    "useUnknownInCatchVariables": false,
-    "skipLibCheck": true
-  }
+
+    "types": ["node"],
+
+    "sourceMap": true,
+    "resolveJsonModule": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    "useUnknownInCatchVariables": false
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build"]
 }

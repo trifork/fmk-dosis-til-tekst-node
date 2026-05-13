@@ -1,4 +1,4 @@
-import {DailyDosis} from 'fmk-dosis-til-tekst-ts';
+import { type DailyDosis } from 'fmk-dosis-til-tekst-ts';
 
 export class DosageTranslationDTO {
     shortText: string;

@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { Transform, TransformCallback } from 'stream';
+import { Transform, type TransformCallback } from 'stream';
 import { format } from 'date-fns';
 
 export function createPrettyStream() {

@@ -44,7 +44,7 @@
                             <executable>npm</executable>
                             <arguments>
                                 <argument>install</argument>
-                                <argument>--omit=dev</argument>
+                                <!-- <argument>- -omit=dev</argument> -->
                             </arguments>
                         </configuration>
                     </execution>
@@ -73,7 +73,7 @@
                             <executable>npm</executable>
                             <arguments>
                                 <argument>run</argument>
-                                <argument>swagger</argument>
+                                <argument>build</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -140,7 +140,7 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
-                    <execution>
+                    <!-- <execution>
                         <id>add-resource</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -149,11 +149,11 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}/generated-sources/openapi</directory>
+                                    <directory>src/generated</directory>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
+                    </execution> -->
                     <execution>
                         <id>attach-openapi</id>
                         <phase>package</phase>
@@ -164,7 +164,7 @@
                             <artifacts>
                                 <artifact>
                                     <file>
-                                        ${project.build.directory}/generated-sources/openapi/swagger.json</file>
+                                        src/generated/swagger.json</file>
                                     <type>json</type>
                                     <classifier>openapi</classifier>
                                 </artifact>
