@@ -1,6 +1,6 @@
 {
     "name": "fmk-dosis-til-tekst-node",
-    "version": "2.0.3-FMK-12845-D2T-service-Opdater-dependencies-opgrader-til-NodeNext-ES2022-SNAPSHOT",
+    "version": "2.0.4-SNAPSHOT",
     "description": "",
     "main": "index.js",
     "scripts": {
