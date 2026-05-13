@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks';
 import { randomUUID } from 'crypto';
-import { Request } from 'express';
+import { type Request } from 'express';
 
 type RequestContext = {
     requestId: string;

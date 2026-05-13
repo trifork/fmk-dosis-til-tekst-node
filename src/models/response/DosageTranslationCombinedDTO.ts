@@ -1,4 +1,4 @@
-import {DosageTranslationDTO} from './DosageTranslationDTO';
+import {DosageTranslationDTO} from './DosageTranslationDTO.js';
 
 export class DosageTranslationCombinedDTO {
     combinedTranslation: DosageTranslationDTO;

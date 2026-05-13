@@ -1,4 +1,4 @@
-import { DateFormattedString } from "./DateFormattedString";
+import { type DateFormattedString } from "./DateFormattedString.js";
 
 export interface GetDosageProposalResultDTO {
     type: string;

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { logger } from '../logger/logger';
+import { logger } from '../logger/logger.js';
 
 export function findLatestModificationDate(...roots: string[]): Date | null {
     try {

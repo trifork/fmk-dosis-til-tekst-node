@@ -1,17 +1,13 @@
-import { readFileSync } from "fs";
-import path from "path";
+import { appVersion } from "../generated/appVersion.js";
 
-export function calcETag() {
-    const appVersion: string = JSON.parse(
-        readFileSync(path.join(__dirname, '../../package.json'), 'utf-8')
-    ).version;
-
-    if (appVersion.indexOf("SNAPSHOT") < 0) {
+export function calcETag(): string {
+    if (!appVersion.includes("SNAPSHOT")) {
         // Not a snapshot version, so just use app version as ETag
         return appVersion;
     }
 
     // For snapshot versions also add 'now'
     const secondsSinceEpoch = Math.floor(Date.now() / 1000);
-    return appVersion + ":" +secondsSinceEpoch ;
+
+    return `${appVersion}:${secondsSinceEpoch}`;
 }

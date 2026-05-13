@@ -1,4 +1,4 @@
-import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
+import type { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 
 
 export async function rerouteGetToPost(req: ExpressRequest, res: ExpressResponse, next: NextFunction) {

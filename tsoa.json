@@ -5,10 +5,11 @@
     "src/controllers/*Controller.ts"
   ],
   "spec": {
-    "outputDirectory": "target/generated-sources/openapi",
+    "outputDirectory": "src/generated",
     "specVersion": 3
   },
   "routes": {
-    "routesDir": "target"
+    "routesDir": "src/generated",
+    "esm": true
   }
 }

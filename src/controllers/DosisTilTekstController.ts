@@ -1,16 +1,16 @@
-import { Request as ExpressRequest } from 'express';
-import { DailyDosis, DosageProposalXML, DosageType } from 'fmk-dosis-til-tekst-ts';
+import { type Request as ExpressRequest } from 'express';
+import { type DailyDosis, DosageProposalXML, DosageType } from 'fmk-dosis-til-tekst-ts';
 import { Body, Controller, Get, Post, Produces, Query, Request, Route } from 'tsoa';
-import { DateFormattedString } from '../models/request/DateFormattedString';
-import { DosageWrapperDTO } from '../models/request/DosageWrapperDTO';
-import { DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO';
-import { DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO';
-import { DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO';
-import { GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO';
-import { TextOption } from '../models/request/TextOption';
-import DosageProposalDTO from '../models/response/DosageProposalDTO';
-import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO';
-import { DosisTilTekstService } from '../services/DosisTilTekstService';
+import { type DateFormattedString } from '../models/request/DateFormattedString.js';
+import { type DosageWrapperDTO } from '../models/request/DosageWrapperDTO.js';
+import { type DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO.js';
+import { type DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO.js';
+import { type DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO.js';
+import { type GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO.js';
+import { TextOption } from '../models/request/TextOption.js';
+import type DosageProposalDTO from '../models/response/DosageProposalDTO.js';
+import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO.js';
+import { DosisTilTekstService } from '../services/DosisTilTekstService.js';
 
 @Route('')
 export class DosisTilTekstController extends Controller {

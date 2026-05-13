@@ -13,8 +13,8 @@
 
 
 import pino from 'pino';
-import { createPrettyStream } from './pinoPrettyTransport';
-import { getRequestContext } from './requestContext'; // Optional: for requestId support
+import { createPrettyStream } from './pinoPrettyTransport.js';
+import { getRequestContext } from './requestContext.js'; // Optional: for requestId support
 
 export const logger = pino(
     {

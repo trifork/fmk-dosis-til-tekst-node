@@ -1,17 +1,27 @@
-import express, { Application, json, NextFunction, Request, Response } from 'express';
+import express, { type Application, json, type NextFunction, type Request, type Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 
+import { DosisTilTekstException } from 'fmk-dosis-til-tekst-ts';
 import { ValidateError } from 'tsoa';
-import { RegisterRoutes } from "../target/routes";
-import { logger } from './logger/logger';
-import { calcETag } from './controllers/eTagUtil';
-import { rerouteGetToPost } from './controllers/rerouteGetToPost';
-import { withRequestContext } from './logger/requestContext';
+import { RegisterRoutes } from "./generated/routes.js";
+import { calcETag } from './controllers/eTagUtil.js';
+import { rerouteGetToPost } from './controllers/rerouteGetToPost.js';
+import { logger } from './logger/logger.js';
+import { withRequestContext } from './logger/requestContext.js';
+
+import qs from 'qs';
+import { readFileSync } from 'fs';
 
 const PORT = process.env.PORT || 8000;
 
 // use express.js
 const app: Application = express();
+
+// app.set("query parser", (str: string) => {
+//     // Encode literal '+' as %2B so qs doesn't convert them to spaces
+//     const safe = str.replace(/\+/g, "%2B");
+//     return qs.parse(safe);
+// });
 
 app.set('etag', false); // Disable Express default ETag generation - we make our own
 
@@ -90,14 +100,22 @@ app.use(function errorHandler(
     res: Response,
     next: NextFunction
 ): void {
-    if (err instanceof ValidateError) {
+    if (err instanceof DosisTilTekstException) {
+        res.status(400).json({
+            message: err.message
+        })
+    } else if (err instanceof ValidateError) {
         logger.warn(`Caught Validation Error for ${req.path}: ${JSON.stringify(err.fields)}. ${dumpBodyAndParams(req)}`);
         res.status(422).json({
             message: "Validation Failed",
             details: err?.fields,
         });
-    } else if (err instanceof Error) {
-        logger.error(err.stack, dumpBodyAndParams(req));
+    } else {
+        if (err instanceof Error) {
+            logger.error(err.stack, dumpBodyAndParams(req));
+        } else {
+            logger.error("Unexpected error, err=" + JSON.stringify(err));
+        }
         res.status(500).json({
             message: "Internal Server Error",
         });
@@ -124,8 +142,7 @@ function dumpBodyAndParams(req: Request) {
 
 }
 
-// add swagger api documentation
-const swaggerDocument = require('../target/generated-sources/openapi/swagger.json');
+import swaggerDocument from "./generated/swagger.json" with { type: "json" };
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal =>
@@ -139,4 +156,3 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
 });
-
