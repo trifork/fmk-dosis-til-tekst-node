@@ -1,6 +1,6 @@
 {
     "name": "fmk-dosis-til-tekst-node",
-    "version": "2.0.4-SNAPSHOT",
+    "version": "2.0.4-FMK-13198-Dosisoversaettelse-via-nyt-FMK-1.6.0-inspireret-API-SNAPSHOT",
     "description": "",
     "main": "index.js",
     "scripts": {
