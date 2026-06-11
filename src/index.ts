@@ -56,7 +56,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
+const PATHS_TO_REROUTE_FROM_GET_TO_POST_LEGACY = new Set([
     '/convertCombined',
     '/convertLongText',
     '/convertShortText',
@@ -67,9 +67,16 @@ const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
     '/getLongTextConverterClassName'
 ]);
 
+const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
+    '/renderDosageCombined',
+    '/renderDosage'
+]);
+
 app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST.has(req.path)) {
-        rerouteGetToPost(req, res, next);
+    if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST_LEGACY.has(req.path)) {
+        rerouteGetToPost(req, res, true, next);
+    } if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST.has(req.path)) {
+        rerouteGetToPost(req, res, false, next);
     } else {
         next();
     }
