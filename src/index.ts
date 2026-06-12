@@ -40,6 +40,16 @@ const requestLogger = (req: Request, res: Response, next: NextFunction): void =>
 };
 app.use(requestLogger);
 
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        if (res.statusCode === 404) {
+            logger.warn(`Sending 404 Not Found, method=${req.method}, url=${req.originalUrl}`);
+        }
+    });
+
+    next();
+});
+
 app.use(json());
 
 // ETag handling: only apply to GET requests
