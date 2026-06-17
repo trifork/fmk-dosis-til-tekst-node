@@ -176,4 +176,40 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!-- All this just to be able to prune dev dependencies before docker image is built -->
+        <profile>
+            <id>jenkins</id>
+            <activation>
+                <property>
+                    <name>env.JENKINS_URL</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>omit-dev</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>prune</argument>
+                                        <argument>--omit=dev</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
