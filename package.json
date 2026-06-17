@@ -1,6 +1,6 @@
 {
     "name": "fmk-dosis-til-tekst-node",
-    "version": "2.0.4-FMK-13277-D2T-Saarbarhedsrettelse-Fjern-dev-dependencies-fra-docker-image-SNAPSHOT",
+    "version": "2.0.5-SNAPSHOT",
     "description": "",
     "main": "index.js",
     "scripts": {
