@@ -177,12 +177,14 @@
     </build>
 
     <profiles>
-        <!-- All this just to be able to prune dev dependencies before docker image is built -->
+        <!-- All this just to be able to prune dev dependencies before docker image is built (and
+        not when a developer runs mvn install) -->
         <profile>
             <id>jenkins</id>
             <activation>
                 <property>
-                    <name>env.JENKINS_URL</name>
+                    <name>user.name</name>
+                    <value>jenkins</value>
                 </property>
             </activation>
             <build>
