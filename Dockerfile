@@ -6,6 +6,8 @@ ENV npm_config_cache=/app/.npm
 
 RUN addgroup --system fmk-dosistiltekst --gid ${USERID} && adduser --system --group fmk-dosistiltekst --uid ${USERID}
 
+RUN npm prune --omit=dev
+
 WORKDIR /app
 
 COPY node_modules node_modules
