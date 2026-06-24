@@ -12,6 +12,7 @@ import { TextOption } from '../models/request/TextOption.js';
 import type DosageProposalDTO from '../models/response/DosageProposalDTO.js';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO.js';
 import { DosisTilTekstService } from '../services/DosisTilTekstService.js';
+import type { DosageRenditionCombinedDTO } from '../models/response/DosageRenditionCombinedDTO.js';
 
 @Route('')
 export class DosisTilTekstController extends Controller {
@@ -202,13 +203,13 @@ export class DosisTilTekstController extends Controller {
 
     @Post('/renderDosageCombined')
     @Produces("application/json")
-    public postRenderDosageCombined(@Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): DosageTranslationCombinedDTO | null {
+    public postRenderDosageCombined(@Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): DosageRenditionCombinedDTO | null {
         return new DosisTilTekstService().renderDosageCombined(requestBody, options);
     }
 
     @Get('/renderDosageCombined')
     @Produces("application/json")
-    public getRenderDosageCombined(@Queries() queries: RenderDosageGETOptions): DosageTranslationCombinedDTO | null {
+    public getRenderDosageCombined(@Queries() queries: RenderDosageGETOptions): DosageRenditionCombinedDTO | null {
         // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
         return null;
     }
