@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <revision>2.0.5-SNAPSHOT</revision>
+        <revision>2.1.0-SNAPSHOT</revision>
     </properties>
 
     <distributionManagement>
