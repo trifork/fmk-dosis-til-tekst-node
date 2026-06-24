@@ -1,16 +1,18 @@
 import { type Request as ExpressRequest } from 'express';
-import { type DailyDosis, DosageProposalXML, DosageType } from 'fmk-dosis-til-tekst-ts';
-import { Body, Controller, Get, Post, Produces, Query, Request, Route } from 'tsoa';
+import { type DailyDosis, DosageProposalXML, DosageType, type DosageV2 } from 'fmk-dosis-til-tekst-ts';
+import { Body, Controller, Get, Post, Produces, Queries, Query, Request, Route } from 'tsoa';
 import { type DateFormattedString } from '../models/request/DateFormattedString.js';
 import { type DosageWrapperDTO } from '../models/request/DosageWrapperDTO.js';
 import { type DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO.js';
 import { type DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO.js';
 import { type DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO.js';
 import { type GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO.js';
+import type { RenderDosageGETOptions, RenderDosageOptions } from '../models/request/RenderDosageOptions.js';
 import { TextOption } from '../models/request/TextOption.js';
 import type DosageProposalDTO from '../models/response/DosageProposalDTO.js';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO.js';
 import { DosisTilTekstService } from '../services/DosisTilTekstService.js';
+import type { DosageRenditionCombinedDTO } from '../models/response/DosageRenditionCombinedDTO.js';
 
 @Route('')
 export class DosisTilTekstController extends Controller {
@@ -195,6 +197,34 @@ export class DosisTilTekstController extends Controller {
     public getCalculateDailyDosis(@Query() dosageJson: string): DailyDosis {
         // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
         return null as any;
+    }
+
+    // FMK 1.6.0 rendering support from here: 
+
+    @Post('/renderDosageCombined')
+    @Produces("application/json")
+    public postRenderDosageCombined(@Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): DosageRenditionCombinedDTO | null {
+        return new DosisTilTekstService().renderDosageCombined(requestBody, options);
+    }
+
+    @Get('/renderDosageCombined')
+    @Produces("application/json")
+    public getRenderDosageCombined(@Queries() queries: RenderDosageGETOptions): DosageRenditionCombinedDTO | null {
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null;
+    }
+
+    @Post('/renderDosage')
+    @Produces("application/json")
+    public postRenderDosage(@Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): string {
+        return new DosisTilTekstService().renderDosage(requestBody, options);
+    }
+
+    @Get('/renderDosage')
+    @Produces("application/json")
+    public getRenderDosage(@Queries() queries: RenderDosageOptions): DosageTranslationCombinedDTO | null {
+        // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
+        return null;
     }
 }
 

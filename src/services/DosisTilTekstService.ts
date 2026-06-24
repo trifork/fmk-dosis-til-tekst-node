@@ -2,23 +2,25 @@ import {
     CombinedTextConverter,
     type DailyDosis,
     DailyDosisCalculator,
+    DefaultDosageRendererFactory,
+    type DosageFormatterOptions,
     DosageProposalXML,
     DosageProposalXMLGenerator,
     DosageType,
     DosageTypeCalculator,
     DosageTypeCalculator144,
+    type DosageV2,
     Factory,
-    TextHelper,
     TextOptions
 } from 'fmk-dosis-til-tekst-ts';
-import { type GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO.js';
-import { type DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO.js';
-import { type DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO.js';
-import { type DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO.js';
 import { type DosageWrapperDTO } from '../models/request/DosageWrapperDTO.js';
-import { DosageTranslationDTO } from '../models/response/DosageTranslationDTO.js';
+import { type DosageWrapperWithMaxLengthDTO } from '../models/request/DosageWrapperWithMaxLengthDTO.js';
+import { type DosageWrapperWithOptionsAndMaxLengthDTO } from '../models/request/DosageWrapperWithOptionsAndMaxLengthDTO.js';
+import { type DosageWrapperWithOptionsDTO } from '../models/request/DosageWrapperWithOptionsDTO.js';
+import { type GetDosageProposalResultDTO } from '../models/request/GetDosageProposalResultDTO.js';
 import { DosageTranslationCombinedDTO } from '../models/response/DosageTranslationCombinedDTO.js';
-import { logger } from '../logger/logger.js';
+import { DosageTranslationDTO } from '../models/response/DosageTranslationDTO.js';
+import type { CombinedTranslation, DosageRenditionCombinedDTO } from '../models/response/DosageRenditionCombinedDTO.js';
 
 
 export class DosisTilTekstService {
@@ -122,6 +124,56 @@ export class DosisTilTekstService {
     public calculateDailyDosis(requestDTO: DosageWrapperDTO): DailyDosis {
         const dosage = requestDTO.dosage;
         return DailyDosisCalculator.calculate(dosage);
+    }
+
+    public renderDosageCombined(dosage: DosageV2, options: DosageFormatterOptions): DosageRenditionCombinedDTO {
+
+        const oneLineOptions: DosageFormatterOptions = {
+            html: options?.html,
+            oneLine: true,
+            maxLength: options?.maxLength ?? 70
+        }
+
+        const multiLineOptions: DosageFormatterOptions = {
+            html: options?.html,
+            oneLine: false
+            // maxLength only applies to oneLine
+        }
+
+        const oneLineRenderer = new DefaultDosageRendererFactory().getDosageRenderer(oneLineOptions);
+        const multiLineRenderer = new DefaultDosageRendererFactory().getDosageRenderer(multiLineOptions);
+
+        const shortText = oneLineRenderer.render(dosage);
+        const longText = multiLineRenderer.render(dosage);
+
+        let individualPeriods: CombinedTranslation[] = [{ LongText: longText, ShortText: shortText }];
+
+        if (dosage.DosagePeriod?.length && dosage.DosagePeriod?.length > 1) {
+            const dosageCopies = dosage.DosagePeriod.map(period => ({
+                ...dosage,
+                DosagePeriod: [period],
+            }));
+
+            individualPeriods = dosageCopies.map(d => ({
+                ShortText: oneLineRenderer.render(d),
+                LongText: multiLineRenderer.render(d)
+            }));
+        }
+
+        const combined: DosageRenditionCombinedDTO = {
+            CombinedTranslation: {
+                LongText: longText,
+                ShortText: shortText
+            },
+            PeriodTranslations: individualPeriods
+        };
+
+        return combined;
+    }
+
+    public renderDosage(dosage: DosageV2, options: DosageFormatterOptions): string {
+        const renderer = new DefaultDosageRendererFactory().getDosageRenderer(options);
+        return renderer.render(dosage);
     }
 
     private convertLegacyOptions(options: string | TextOptions | undefined): TextOptions | undefined {

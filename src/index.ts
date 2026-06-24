@@ -40,6 +40,16 @@ const requestLogger = (req: Request, res: Response, next: NextFunction): void =>
 };
 app.use(requestLogger);
 
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        if (res.statusCode === 404) {
+            logger.warn(`Sending 404 Not Found, method=${req.method}, url=${req.originalUrl}`);
+        }
+    });
+
+    next();
+});
+
 app.use(json());
 
 // ETag handling: only apply to GET requests
@@ -56,7 +66,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
+const PATHS_TO_REROUTE_FROM_GET_TO_POST_LEGACY = new Set([
     '/convertCombined',
     '/convertLongText',
     '/convertShortText',
@@ -67,9 +77,16 @@ const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
     '/getLongTextConverterClassName'
 ]);
 
+const PATHS_TO_REROUTE_FROM_GET_TO_POST = new Set([
+    '/renderDosageCombined',
+    '/renderDosage'
+]);
+
 app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST.has(req.path)) {
-        rerouteGetToPost(req, res, next);
+    if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST_LEGACY.has(req.path)) {
+        rerouteGetToPost(req, res, true, next);
+    } else if (req.method === "GET" && PATHS_TO_REROUTE_FROM_GET_TO_POST.has(req.path)) {
+        rerouteGetToPost(req, res, false, next);
     } else {
         next();
     }

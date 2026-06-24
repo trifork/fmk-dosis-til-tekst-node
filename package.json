@@ -1,6 +1,6 @@
 {
     "name": "fmk-dosis-til-tekst-node",
-    "version": "2.0.5-SNAPSHOT",
+    "version": "2.0.4-FMK-13198-Dosisoversaettelse-via-nyt-FMK-1.6.0-inspireret-API-SNAPSHOT",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -39,7 +39,7 @@
         "@types/swagger-ui-express": "4.1.8",
         "date-fns": "4.1.0",
         "express": "5.2.1",
-        "fmk-dosis-til-tekst-ts": "2.1.1",
+        "fmk-dosis-til-tekst-ts": "^2.2.0",
         "morgan": "1.10.1",
         "pino": "10.3.1",
         "swagger-ui-express": "5.0.1",
