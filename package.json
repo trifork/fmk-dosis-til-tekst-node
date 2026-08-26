@@ -45,5 +45,8 @@
         "swagger-ui-express": "5.0.1",
         "ts-node": "10.9.2",
         "tsoa": "6.6.0"
+    },
+    "overrides": {
+        "ts-deepmerge": "^8.0.0"
     }
 }
