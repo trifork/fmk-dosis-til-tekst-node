@@ -1,6 +1,6 @@
 {
     "name": "fmk-dosis-til-tekst-node",
-    "version": "2.1.1-FMK-14170-Opdater-fmk-dosis-til-tekst-ts-til-nyeste-SNAPSHOT",
+    "version": "2.1.2-SNAPSHOT",
     "description": "",
     "main": "index.js",
     "scripts": {
