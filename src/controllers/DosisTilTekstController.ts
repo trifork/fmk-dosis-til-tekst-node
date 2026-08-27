@@ -215,16 +215,27 @@ export class DosisTilTekstController extends Controller {
     }
 
     @Post('/renderDosage')
-    @Produces("application/json")
-    public postRenderDosage(@Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): string {
-        return new DosisTilTekstService().renderDosage(requestBody, options);
+    @Produces("text/plain; charset=utf-8")
+    @Produces("text/html; charset=utf-8")
+    public postRenderDosage(@Request() req: ExpressRequest, @Body() requestBody: DosageV2, @Queries() options: RenderDosageOptions): string {
+        const result = new DosisTilTekstService().renderDosage(requestBody, options);
+
+        const contentType = options?.html
+            ? "text/html; charset=utf-8"
+            : "text/plain; charset=utf-8";
+
+        req.res?.header("Content-Type", contentType);
+        req.res?.send(result);
+        return "";
     }
 
     @Get('/renderDosage')
-    @Produces("application/json")
-    public getRenderDosage(@Queries() queries: RenderDosageOptions): DosageTranslationCombinedDTO | null {
+    @Produces("text/plain; charset=utf-8")
+    @Produces("text/html; charset=utf-8")
+    public getRenderDosage(@Request() req: ExpressRequest, @Queries() queries: RenderDosageOptions): string {
         // GET requests are rerouted to POST For this path in order to make use of TSOA payload validation
-        return null;
+        return "";
     }
+
 }
 
